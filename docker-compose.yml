@@ -35,8 +35,11 @@ services:
       - PYTHONPATH=/opt/airflow
     volumes:
       - .:/opt/airflow
-      - ./data:/opt/airflow/data  # Explicit data volume
-      - ./logs:/opt/airflow/logs  # Explicit logs volume
+      - ./dags:/opt/airflow/dags
+      - ./config:/opt/airflow/config
+      - ./src:/opt/airflow/src
+      - ./data:/opt/airflow/data
+      - ./logs:/opt/airflow/logs
     ports:
       - "8080:8080"
     healthcheck:
@@ -58,12 +61,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob --hostname \"$${HOSTNAME}\""]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
     environment:
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
       - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
@@ -72,10 +69,48 @@ services:
       - PYTHONPATH=/opt/airflow
     volumes:
       - .:/opt/airflow
-      - ./data:/opt/airflow/data  # Explicit data volume
-      - ./logs:/opt/airflow/logs  # Explicit logs volume
+      - ./dags:/opt/airflow/dags
+      - ./config:/opt/airflow/config
+      - ./src:/opt/airflow/src
+      - ./data:/opt/airflow/data
+      - ./logs:/opt/airflow/logs
+    healthcheck:
+      test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob --hostname \"$${HOSTNAME}\""]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
     command: airflow scheduler
+
+  airflow-worker:
+    build: .
+    depends_on:
+      airflow-webserver:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+      - AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/0
+      - AIRFLOW__CELERY__RESULT_BACKEND=db+postgresql://airflow:airflow@postgres/airflow
+      - PYTHONPATH=/opt/airflow
+    volumes:
+      - .:/opt/airflow
+      - ./dags:/opt/airflow/dags
+      - ./config:/opt/airflow/config
+      - ./src:/opt/airflow/src
+      - ./data:/opt/airflow/data
+      - ./logs:/opt/airflow/logs
+    healthcheck:
+      test: ["CMD-SHELL", "airflow jobs check --job-type LocalTaskJob --hostname \"$${HOSTNAME}\""]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    command: airflow celery worker
 
 volumes:
   postgres_data:
-  

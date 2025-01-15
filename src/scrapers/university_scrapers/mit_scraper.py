@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from typing import List, Dict, Any
+from datetime import datetime
 from time import sleep
 from src.scrapers.base_scraper import BaseScraper
 

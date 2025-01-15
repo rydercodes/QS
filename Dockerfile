@@ -42,6 +42,13 @@ RUN pip install --no-cache-dir --user "apache-airflow==2.8.1" \
 # Copy project files
 COPY --chown=airflow:airflow . ${AIRFLOW_HOME}
 
+# After installing Airflow
+RUN pip install --no-cache-dir --user "apache-airflow==2.8.1" \
+    --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.8.1/constraints-3.11.txt" && \
+    pip install --no-cache-dir --user "apache-airflow-providers-celery>=3.3.0" && \
+    pip install --no-cache-dir --user "psycopg2-binary==2.9.9" && \
+    pip install --no-cache-dir --user "celery>=5.3.0"
+
 # Install Python packages
 RUN pip install --no-cache-dir --user --upgrade pip && \
     pip install --no-cache-dir --user -r requirements.txt
