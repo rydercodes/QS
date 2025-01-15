@@ -6,7 +6,8 @@ ENV AIRFLOW_HOME=/opt/airflow
 ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH=$PATH:/home/airflow/.local/bin
-# Set a static Fernet key for development (you should change this in production)
+ENV PYTHONPATH="${AIRFLOW_HOME}:${PYTHONPATH}"
+# Set a static Fernet key for development
 ENV AIRFLOW__CORE__FERNET_KEY='YWn5lJvqY4mQywjzQVeLmE4HBhxTHLYnPeDYyHzS5yk='
 
 # Install system dependencies
@@ -17,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     postgresql-client \
     python3-dev \
+    virtualenv \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -37,19 +39,14 @@ RUN pip install --no-cache-dir --user "apache-airflow==2.8.1" \
     pip install --no-cache-dir --user "apache-airflow-providers-celery>=3.3.0" && \
     pip install --no-cache-dir --user "psycopg2-binary==2.9.9"
 
-# Copy requirements file
-COPY --chown=airflow:airflow requirements.txt .
+# Copy project files
+COPY --chown=airflow:airflow . ${AIRFLOW_HOME}
 
 # Install Python packages
 RUN pip install --no-cache-dir --user --upgrade pip && \
     pip install --no-cache-dir --user -r requirements.txt
 
-# Copy project directories
-COPY --chown=airflow:airflow dags ${AIRFLOW_HOME}/dags
-COPY --chown=airflow:airflow src ${AIRFLOW_HOME}/src
-COPY --chown=airflow:airflow config ${AIRFLOW_HOME}/config
-
-# Create data directory for scraped data
+# Create data directory
 RUN mkdir -p ${AIRFLOW_HOME}/data/raw/universities && \
     chown -R airflow: ${AIRFLOW_HOME}/data
 

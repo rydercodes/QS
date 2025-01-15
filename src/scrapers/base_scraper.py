@@ -32,8 +32,8 @@ class BaseScraper(ABC):
             raise ValueError(f"URL type {url_type} not found in configuration")
         return urljoin(self.university_data['base_url'], self.config['urls'][url_type])
 
+        # In src/scrapers/base_scraper.py, update _save_data method:
     def _save_data(self, data: Dict[str, Any], data_type: str) -> str:
-        """Save scraped data to file"""
         try:
             # Generate file path
             file_id = self.id_generator.generate_university_file_id(
@@ -41,19 +41,15 @@ class BaseScraper(ABC):
                 data_type
             )
             
-            date_folder = datetime.now().strftime('%Y%m%d')
-            university_folder = f"u{str(self.university_data['id']).zfill(3)}"
-            
+            # Save in an easily accessible location
             path = os.path.join(
-                'data',
-                'raw',
+                '/opt/airflow/data',
                 'universities',
-                university_folder,
-                date_folder
+                f"u{str(self.university_data['id']).zfill(3)}"
             )
             
             os.makedirs(path, exist_ok=True)
-            file_path = os.path.join(path, f"{data_type}.json")
+            file_path = os.path.join(path, f"{data_type}_{datetime.now().strftime('%Y%m%d')}.json")
             
             # Save data
             with open(file_path, 'w', encoding='utf-8') as f:
