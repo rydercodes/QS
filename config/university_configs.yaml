@@ -1,0 +1,14 @@
+MIT:
+  urls:
+    departments: "education/schools-and-departments/"
+    admission: "admissions/"
+    research: "research/"
+  selectors:
+    departments:
+      container: "li.sortable-list__section"
+      title: "a.sortable-list__section-title"
+      fields_container: "li.sortable-list__item"
+      field_name: "span.sortable-list__item-name"
+      field_number: "span.sortable-list__item-number"
+  rate_limit: 1
+  timeout: 30
