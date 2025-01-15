@@ -6,6 +6,8 @@ ENV AIRFLOW_HOME=/opt/airflow
 ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH=$PATH:/home/airflow/.local/bin
+# Set a static Fernet key for development (you should change this in production)
+ENV AIRFLOW__CORE__FERNET_KEY='YWn5lJvqY4mQywjzQVeLmE4HBhxTHLYnPeDYyHzS5yk='
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -29,8 +31,10 @@ RUN mkdir -p ${AIRFLOW_HOME} && \
 USER airflow
 WORKDIR ${AIRFLOW_HOME}
 
-# Install Airflow with PostgreSQL support
-RUN pip install --no-cache-dir --user "apache-airflow==2.8.1" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.8.1/constraints-3.11.txt" && \
+# Install Airflow with PostgreSQL support and Celery
+RUN pip install --no-cache-dir --user "apache-airflow==2.8.1" \
+    --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.8.1/constraints-3.11.txt" && \
+    pip install --no-cache-dir --user "apache-airflow-providers-celery>=3.3.0" && \
     pip install --no-cache-dir --user "psycopg2-binary==2.9.9"
 
 # Copy requirements file
@@ -40,8 +44,6 @@ COPY --chown=airflow:airflow requirements.txt .
 RUN pip install --no-cache-dir --user --upgrade pip && \
     pip install --no-cache-dir --user -r requirements.txt
 
-# Expose port for webserver
 EXPOSE 8080
 
-# Start Airflow webserver
 CMD ["airflow", "webserver", "--port", "8080"]
