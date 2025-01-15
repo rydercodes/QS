@@ -9,21 +9,25 @@ class MITScraper(BaseScraper):
     def scrape_departments(self) -> List[Dict[str, Any]]:
         try:
             departments_url = self.get_url('departments')
-            self.logger.info(f"Scraping departments from: {departments_url}")
+            self.logger.info(f"Starting MIT scraper with URL: {departments_url}")
             
-            response = requests.get(departments_url)
+            self.logger.info("Making HTTP request...")
+            response = requests.get(departments_url, timeout=self.config['timeout'])
+            self.logger.info(f"Response status: {response.status_code}")
+            self.logger.info(f"Response content sample: {response.text[:500]}")
+            
             response.raise_for_status()
             
-            # Parse and process departments
             departments_data = self._process_departments(response.text)
+            self.logger.info(f"Found departments: {[d['name'] for d in departments_data['departments']]}")
             
-            # Save data
-            self._save_data(departments_data, 'departments')
-            
+            saved_path = self._save_data(departments_data, 'departments')
+            self.logger.info(f"Data saved to: {saved_path}")
             return departments_data
             
         except Exception as e:
             self.logger.error(f"Error scraping departments: {str(e)}")
+            self.logger.exception("Full traceback:")
             raise
 
     def _process_departments(self, html_content: str) -> Dict[str, Any]:

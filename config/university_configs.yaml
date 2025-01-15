@@ -1,6 +1,6 @@
-MIT:
+Massachusetts_Institute_of_Technology:
   urls:
-    departments: "/education/schools-and-departments/"
+    departments: "/education/schools-and-departments"
     admission: "admissions/"
     research: "research/"
   selectors:

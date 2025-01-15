@@ -1,9 +1,17 @@
-requests==2.31.0
-beautifulsoup4==4.12.2
-pyyaml==6.0.1
-python-dotenv==1.0.0
-pandas==2.0.3  # Changed from 2.1.1
-numpy==1.24.3  # Added explicit numpy version
-pytest==7.4.0
-black==23.7.0
-pylint==2.17.5
+# requirements.txt
+requests==2.31.0        # Latest stable for Python 3.11
+beautifulsoup4==4.12.2  # Latest stable for Python 3.11
+pyyaml==6.0.1          # Latest stable for Python 3.11
+python-dotenv==1.0.0    # Latest stable for Python 3.11
+pandas==2.0.3          # Known stable for Python 3.11
+numpy==1.24.3          # Known stable for Python 3.11
+pytest==7.4.0          # Compatible with Python 3.11
+black==23.7.0          # Compatible with Python 3.11
+pylint==2.17.5         # Compatible with Python 3.11
+
+# Add these for your project
+bs4==0.0.1             # Beautiful Soup wrapper
+urllib3==2.0.7         # Required by requests
+certifi==2023.7.22     # Required by requests
+charset-normalizer==3.3.2  # Required by requests
+idna==3.4              # Required by requests
