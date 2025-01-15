@@ -44,6 +44,15 @@ COPY --chown=airflow:airflow requirements.txt .
 RUN pip install --no-cache-dir --user --upgrade pip && \
     pip install --no-cache-dir --user -r requirements.txt
 
+# Copy project directories
+COPY --chown=airflow:airflow dags ${AIRFLOW_HOME}/dags
+COPY --chown=airflow:airflow src ${AIRFLOW_HOME}/src
+COPY --chown=airflow:airflow config ${AIRFLOW_HOME}/config
+
+# Create data directory for scraped data
+RUN mkdir -p ${AIRFLOW_HOME}/data/raw/universities && \
+    chown -R airflow: ${AIRFLOW_HOME}/data
+
 EXPOSE 8080
 
 CMD ["airflow", "webserver", "--port", "8080"]
