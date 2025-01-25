@@ -7,6 +7,17 @@
         "country": "United States",
         "region": "Americas",
         "size": "M",
-        "base_url": "https://www.mit.edu/"
+        "base_url": "https://www.mit.edu/",
+        "last_updated": "2025-01-25T20:20:14.901776"
+    },
+    {
+        "id": 2,
+        "rank_2025": "2",
+        "rank_2024": "6",
+        "name": "Imperial College London",
+        "country": "United Kingdom",
+        "region": "Europe",
+        "size": "L",
+        "url": "https://www.imperial.ac.uk/"
     }
 ]

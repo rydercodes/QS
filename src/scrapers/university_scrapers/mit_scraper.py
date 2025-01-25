@@ -62,18 +62,31 @@ class MITScraper(BaseScraper):
             title = title_elem.text.strip()
             department_url = title_elem.get('href', '')
             
-            # Generate department ID
-            dept_id = self.id_generator.generate_department_id(
-                self.university_data['id'],
-                title  # Using title as a fallback for department number
-            )
-
-            fields = []
+            # Get field items
             field_items = section.find_all(
-                selectors['fields_container'].split('.')[0],
+                selectors['fields_container'].split('.')[0], 
                 class_=selectors['fields_container'].split('.')[1]
             )
 
+            # Extract department number from first field
+            dept_number = None
+            if field_items:
+                first_field = field_items[0].find(
+                    selectors['field_number'].split('.')[0],
+                    class_=selectors['field_number'].split('.')[1]
+                )
+                if first_field:
+                    # Get number before dot (e.g. "6" from "6.0001")
+                    dept_number = first_field.text.strip().split('.')[0]
+
+            # Generate department ID using number if found
+            dept_id = self.id_generator.generate_department_id(
+                self.university_data['id'],
+                dept_number if dept_number else title
+            )
+
+            # Process all fields
+            fields = []
             for item in field_items:
                 field_number = item.find(
                     selectors['field_number'].split('.')[0],

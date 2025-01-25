@@ -4,7 +4,8 @@ class IDGenerator:
     @staticmethod
     def generate_university_file_id(university_id: int, file_type: str) -> str:
         timestamp = datetime.now().strftime('%Y%m%d')
-        return f"u{str(university_id).zfill(3)}_{file_type}_{timestamp}"
+        # Remove padding with zfill
+        return f"u{str(university_id)}_{file_type}_{timestamp}"
     
     @staticmethod
     def generate_department_id(university_id: int, dept_number: str) -> str:

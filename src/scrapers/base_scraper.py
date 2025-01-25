@@ -17,23 +17,28 @@ class BaseScraper(ABC):
         # Load config after logger is initialized
         self.config = self._load_config()
 
+    # src/scrapers/base_scraper.py
     def _load_config(self) -> dict:
         try:
             with open('/opt/airflow/config/university_configs.yaml', 'r') as f:
                 configs = yaml.safe_load(f)
-                university_key = "Massachusetts_Institute_of_Technology"
+                
+                # Clean university name to match config key format
+                university_key = self.university_data['name']
+                university_key = university_key.split('(')[0].strip()  # Remove parentheses part
+                university_key = university_key.replace(' ', '_')
                 
                 self.logger.info(f"Looking for configuration with key: {university_key}")
-                config = configs.get(university_key)
                 
+                config = configs.get(university_key)
                 if not config:
                     raise ValueError(f"No configuration found for {university_key}")
                     
-                self.logger.info(f"Found configuration for {university_key}")
                 return config
         except Exception as e:
             self.logger.error(f"Error loading config: {str(e)}")
-            raise Exception(f"Error loading configuration: {str(e)}")
+            raise
+
 
     def get_url(self, url_type: str) -> str:
         if url_type not in self.config['urls']:
@@ -53,7 +58,8 @@ class BaseScraper(ABC):
             
             # Use absolute path
             base_path = '/opt/airflow/data'
-            university_folder = f"u{str(self.university_data['id']).zfill(3)}"
+            # Change this line
+            university_folder = f"u{str(self.university_data['id'])}"  # Remove zfill(3)
             date_folder = datetime.now().strftime('%Y%m%d')
             
             path = os.path.join(

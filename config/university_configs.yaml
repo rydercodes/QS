@@ -12,3 +12,16 @@ Massachusetts_Institute_of_Technology:
       field_number: "span.sortable-list__item-number"
   rate_limit: 1
   timeout: 30
+
+Imperial_College_London:
+  urls:
+    departments: "/departments-and-faculties"
+  selectors:
+    departments:
+      container: "div.col.lg-3.md-6.link-list"
+      title: "h2.fake-h3 a"
+      fields_container: "ul li"
+      field_name: "a"
+      faculty_container: "div.row.link-list"
+  rate_limit: 1
+  timeout: 30
