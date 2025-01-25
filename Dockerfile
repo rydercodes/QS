@@ -55,8 +55,13 @@ RUN pip install --no-cache-dir --user --upgrade pip && \
 
 # Create data directory
 RUN mkdir -p ${AIRFLOW_HOME}/data/raw/universities && \
+    mkdir -p ${AIRFLOW_HOME}/data/processed/universities && \
     chown -R airflow: ${AIRFLOW_HOME}/data
 
 EXPOSE 8080
+
+
+
+
 
 CMD ["airflow", "webserver", "--port", "8080"]

@@ -42,7 +42,8 @@ def check_universities_for_updates() -> List[Dict]:
                 continue
             
             last_updated = datetime.fromisoformat(university['last_updated'])
-            if datetime.now() - last_updated > timedelta(hours=24):
+            # Change time threshold
+            if datetime.now() - last_updated > timedelta(minutes=5):  # Changed from hours=24
                 logger.info(f"{university['name']} needs update - last updated: {last_updated}")
                 universities_to_update.append(university)
         
